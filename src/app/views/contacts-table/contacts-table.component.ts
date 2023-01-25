@@ -1,9 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ContactModel } from '../../models/contact.model';
 import { ContactsService } from 'src/app/services/contacts.service';
-import { Router } from '@angular/router';
-
-import { EditContactComponent } from '../edit-contact/edit-contact.component';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
     selector: 'app-contacts-table',
@@ -20,38 +19,53 @@ export class ContactsTableComponent implements OnInit {
         'phoneNumber',
         'actions',
     ];
+
+    @ViewChild('paginator') paginator: MatPaginator
+
     contacts: ContactModel[] = [];
 
-    rotateSpinner: boolean = true
+    dataSource: MatTableDataSource<ContactModel>;
 
+    contactData: any
+    rotateSpinner: boolean = true
     editForm: boolean = false
 
-    contact: any
+   
 
-    constructor(private readonly contactsService: ContactsService, private router: Router) {}
+    constructor(private readonly contactsService: ContactsService) {}
+    
 
     ngOnInit() : void {
         this.contactsService
             .getContacts()
             .subscribe((data) => {
-                this.contacts = data.data,
+                this.dataSource = new MatTableDataSource(data.data);
+                this.dataSource.paginator = this.paginator;
                 this.rotateSpinner = false
             });
+            
+            
+        
     }
 
-    openEditDialog(c: ContactModel) {
-        
-        this.editForm = true
-        this.contact = c
 
+    openEditDialog(c: ContactModel) {
+        this.contactData = c
+        this.editForm = true
     }
 
     receiveMessage($event: any) {
-        this.editForm = $event
+        console.log($event.contactsEvent)
+        if ($event.contactsEvent != undefined) {
+            this.dataSource = new MatTableDataSource($event.contactsEvent);
+        }
+        this.editForm = $event.formEvent
+        
+        
     }
 
     openAddDialog() {
-    
+        
 
     }
 

@@ -7,9 +7,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material.module';
 import { ContactsTableComponent } from './views/contacts-table/contacts-table.component';
 import { EditContactComponent } from './views/edit-contact/edit-contact.component';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatPaginatorModule } from '@angular/material/paginator';
+
+
 
 @NgModule({
     declarations: [AppComponent, ContactsTableComponent, EditContactComponent],
@@ -20,7 +22,8 @@ import { MatDialogModule } from '@angular/material/dialog';
         MaterialModule,
         MatDialogModule,
         FormsModule,
-        MatProgressSpinnerModule
+        MatProgressSpinnerModule,
+        MatPaginatorModule
     ],
     providers: [],
     bootstrap: [AppComponent],

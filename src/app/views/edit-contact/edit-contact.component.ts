@@ -1,9 +1,6 @@
-import { Component, Inject, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { ContactModel } from 'src/app/models/contact.model';
 import { ContactsService } from 'src/app/services/contacts.service';
-import { ContactModel, ContactWriteModel } from 'src/app/models/contact.model';
-import { Router } from '@angular/router';
-import { NumberInput } from '@angular/cdk/coercion';
-
 
 @Component({
     selector: 'app-edit-contact',
@@ -13,24 +10,21 @@ import { NumberInput } from '@angular/cdk/coercion';
 export class EditContactComponent implements OnInit {
 
     @Input() data: any
-    @Output() event = new EventEmitter<boolean>()
+    @Output() event = new EventEmitter<any>()
+
 
     rotateSpinner: boolean = false
 
-    editForm: boolean = false
+    constructor( private readonly contactsService: ContactsService) {}
 
-    constructor( 
-        private readonly contactsService: ContactsService,
-        private router: Router
-    ) {}
-
+    currentData: any
     ngOnInit(): void {
-        //this.contactsService
-            //.getContactById(this.data)
-            //.subscribe((data) => {
-               // this.contact = data,
-              //  this.rotateSpinner = false   
-           // });
+        /*this.contactsService
+            .getContacts()
+            .subscribe((data) => {
+                this.currentData = data.data
+                this.rotateSpinner = false
+        });*/
     }
 
     editContact() {
@@ -38,15 +32,29 @@ export class EditContactComponent implements OnInit {
         this.contactsService
             .updateContact(this.data.id, this.data)
             .subscribe(() => {
-                this.event.emit(this.editForm)
+                this.event.emit({
+                    formEvent: false
+                })
                 this.rotateSpinner = false
             })
          
     }
 
-    exitDialog() {
-        this.event.emit(this.editForm)
-       
+    exitContact() {
+        this.rotateSpinner = true
+        this.contactsService
+            .getContacts()
+            .subscribe((data) => {
+                this.event.emit({
+                    formEvent: false,
+                    contactsEvent: data.data
+                })
+                this.rotateSpinner = false
+            });
+
+
+                
+          
     }
 }
 
