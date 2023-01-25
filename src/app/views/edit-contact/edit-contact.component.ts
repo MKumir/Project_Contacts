@@ -1,8 +1,8 @@
-import { Component, Inject, OnInit, Input } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Component, Inject, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { ContactsService } from 'src/app/services/contacts.service';
 import { ContactModel, ContactWriteModel } from 'src/app/models/contact.model';
 import { Router } from '@angular/router';
+import { NumberInput } from '@angular/cdk/coercion';
 
 
 @Component({
@@ -12,43 +12,41 @@ import { Router } from '@angular/router';
 })
 export class EditContactComponent implements OnInit {
 
-    id: number
-    contact: any
-    rotateSpinner: boolean = true
+    @Input() data: any
+    @Output() event = new EventEmitter<boolean>()
 
-    constructor(
-        
+    rotateSpinner: boolean = false
+
+    editForm: boolean = false
+
+    constructor( 
         private readonly contactsService: ContactsService,
-        private router: Router,
-        public dialogRef: MatDialogRef<any>,
-        @Inject(MAT_DIALOG_DATA) public data: any) {
-            this.id = data.id
-        }
+        private router: Router
+    ) {}
 
     ngOnInit(): void {
-        this.contactsService
-            .getContactById(this.id)
-            .subscribe((data) => {
-                this.contact = data,
-                this.rotateSpinner = false   
-            });
+        //this.contactsService
+            //.getContactById(this.data)
+            //.subscribe((data) => {
+               // this.contact = data,
+              //  this.rotateSpinner = false   
+           // });
     }
 
     editContact() {
+        this.rotateSpinner = true
         this.contactsService
-            .updateContact(this.contact.id, this.contact)
-            .subscribe()
-        this.dialogRef.close(
-           
-        )
-        
-    
-        
+            .updateContact(this.data.id, this.data)
+            .subscribe(() => {
+                this.event.emit(this.editForm)
+                this.rotateSpinner = false
+            })
          
     }
 
     exitDialog() {
-        this.dialogRef.close()
+        this.event.emit(this.editForm)
+       
     }
 }
 

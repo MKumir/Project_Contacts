@@ -5,27 +5,27 @@
 <ng-template #contactForm>
     <mat-form-field appearance="fill">
         <mat-label>First name</mat-label>
-        <input [(ngModel)] = "contact.firstName" matInput />
+        <input [(ngModel)] = "data.firstName" matInput />
     </mat-form-field>
     
     <mat-form-field appearance="fill">
         <mat-label>Last name</mat-label>
-        <input [(ngModel)] = "contact.lastName" matInput />
+        <input [(ngModel)] = "data.lastName" matInput />
     </mat-form-field>
     
     <mat-form-field appearance="fill">
         <mat-label>Email</mat-label>
-        <input [(ngModel)] = "contact.emailAddress" matInput />
+        <input [(ngModel)] = "data.emailAddress" matInput />
     </mat-form-field>
     
     <mat-form-field appearance="fill">
         <mat-label>Address</mat-label>
-        <textarea [(ngModel)] = "contact.address" matInput cdkTextareaAutosize></textarea>
+        <textarea [(ngModel)] = "data.address" matInput cdkTextareaAutosize></textarea>
     </mat-form-field>
     
     <mat-form-field appearance="fill">
         <mat-label>Phone number</mat-label>
-        <input [(ngModel)]="contact.phoneNumber" matInput />
+        <input [(ngModel)]="data.phoneNumber" matInput />
     </mat-form-field>
     
     <button mat-raised-button color="primary" (click)="editContact()">SAVE</button>

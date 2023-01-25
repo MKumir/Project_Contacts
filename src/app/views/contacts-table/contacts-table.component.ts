@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ContactModel } from '../../models/contact.model';
 import { ContactsService } from 'src/app/services/contacts.service';
-import { MatDialog } from '@angular/material/dialog'
+import { Router } from '@angular/router';
+
 import { EditContactComponent } from '../edit-contact/edit-contact.component';
 
 @Component({
@@ -23,7 +24,11 @@ export class ContactsTableComponent implements OnInit {
 
     rotateSpinner: boolean = true
 
-    constructor(private readonly contactsService: ContactsService, private dialog: MatDialog) {}
+    editForm: boolean = false
+
+    contact: any
+
+    constructor(private readonly contactsService: ContactsService, private router: Router) {}
 
     ngOnInit() : void {
         this.contactsService
@@ -34,24 +39,19 @@ export class ContactsTableComponent implements OnInit {
             });
     }
 
-    openEditDialog(contact: ContactModel) {
-        this.dialog.open(EditContactComponent, {
-            data: {
-                id: contact.id
-            },
-            
-        });
-
-    
-
-
+    openEditDialog(c: ContactModel) {
+        
+        this.editForm = true
+        this.contact = c
 
     }
 
-    openAddDialog() {
-        this.dialog.open(EditContactComponent);
-        
+    receiveMessage($event: any) {
+        this.editForm = $event
+    }
 
+    openAddDialog() {
+    
 
     }
 
