@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { ContactModel } from 'src/app/models/contact.model';
-import { ContactsService } from 'src/app/services/contacts.service';
+import { Router } from '@angular/router';
+import { ContactWriteModel } from 'src/app/models/contact.model';
+import { ContactsService, GetContactsQuery } from 'src/app/services/contacts.service';
 
 @Component({
     selector: 'app-edit-contact',
@@ -9,53 +10,93 @@ import { ContactsService } from 'src/app/services/contacts.service';
 })
 export class EditContactComponent implements OnInit {
 
-    @Input() data: any
-    @Output() event = new EventEmitter<any>()
+    id: number
 
+    contact: ContactWriteModel
 
     rotateSpinner: boolean = false
 
-    constructor( private readonly contactsService: ContactsService) {}
-
-    currentData: any
-    ngOnInit(): void {
-        /*this.contactsService
-            .getContacts()
-            .subscribe((data) => {
-                this.currentData = data.data
-                this.rotateSpinner = false
-        });*/
+    query: GetContactsQuery = {
+        perPage: 100
     }
 
-    editContact() {
-        this.rotateSpinner = true
-        this.contactsService
-            .updateContact(this.data.id, this.data)
-            .subscribe(() => {
-                this.event.emit({
-                    formEvent: false
-                })
+    message: string = ""
+
+    constructor( private readonly contactsService: ContactsService, private router: Router) {
+        //this.router.getCurrentNavigation()?.extras.state
+    }
+
+    ngOnInit(): void {
+        this.id = history.state.data
+        if(this.id != undefined) {
+            this.rotateSpinner = true
+            this.contactsService
+            .getContactById(this.id)
+            .subscribe((data) => {
+                this.contact = data
                 this.rotateSpinner = false
-            })
-         
+            });
+        } else {
+            this.contact = {
+                firstName: "",
+                lastName: "",
+                emailAddress: "",
+                address: "",
+                phoneNumber: ""
+            }
+        }
+     
+    }
+
+    saveContact() {
+        this.checkValidation(this.contact)
+        if (this.message != "") {
+            window.alert(this.message)
+            this.message = ""
+            return
+        }
+        if(this.id != undefined) {
+            this.rotateSpinner = true
+            this.contactsService
+                .updateContact(this.id, this.contact)
+                .subscribe(() => {
+                    this.router.navigateByUrl('')
+                    this.rotateSpinner = false
+                })
+        } else {
+            this.rotateSpinner = true
+            this.contactsService
+                .createContact(this.contact)
+                .subscribe((data) => {
+                    console.log(data)
+                    this.router.navigateByUrl('')
+                    this.rotateSpinner = false
+                })
+        }
+        
     }
 
     exitContact() {
-        this.rotateSpinner = true
-        this.contactsService
-            .getContacts()
-            .subscribe((data) => {
-                this.event.emit({
-                    formEvent: false,
-                    contactsEvent: data.data
-                })
-                this.rotateSpinner = false
-            });
-
-
-                
-          
+        this.router.navigateByUrl('')
     }
+
+    checkValidation(c: ContactWriteModel) {
+        let emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+        let phoneNumberRegex = /^[0-9+ ]/
+        if(c.firstName == "" || undefined || null) {
+            this.message += "Please write contact first name.\n"
+        }
+        if(c.lastName == "" || undefined || null) {
+            this.message += "Please write contact last name.\n"
+        }
+        if(!c.emailAddress?.match(emailRegex)) {
+            this.message += "Please write valid email.\n"
+        }
+        if(!c.phoneNumber?.match(phoneNumberRegex)) {
+            this.message += "Please write valid phone number.\n"
+        }
+    }
+
 }
 
 

@@ -5,30 +5,30 @@
 <ng-template #contactForm>
     <mat-form-field appearance="fill">
         <mat-label>First name</mat-label>
-        <input [(ngModel)] = "data.firstName" matInput />
+        <input [(ngModel)] = "contact.firstName" matInput />
     </mat-form-field>
     
     <mat-form-field appearance="fill">
         <mat-label>Last name</mat-label>
-        <input [(ngModel)] = "data.lastName" matInput />
+        <input [(ngModel)] = "contact.lastName" matInput />
     </mat-form-field>
     
     <mat-form-field appearance="fill">
         <mat-label>Email</mat-label>
-        <input [(ngModel)] = "data.emailAddress" matInput />
+        <input [(ngModel)] = "contact.emailAddress" matInput />
     </mat-form-field>
     
     <mat-form-field appearance="fill">
         <mat-label>Address</mat-label>
-        <textarea [(ngModel)] = "data.address" matInput cdkTextareaAutosize></textarea>
+        <textarea [(ngModel)] = "contact.address" matInput cdkTextareaAutosize></textarea>
     </mat-form-field>
     
     <mat-form-field appearance="fill">
         <mat-label>Phone number</mat-label>
-        <input [(ngModel)]="data.phoneNumber" matInput />
+        <input [(ngModel)]="contact.phoneNumber" matInput />
     </mat-form-field>
     
-    <button mat-raised-button color="primary" (click)="editContact()">SAVE</button>
+    <button mat-raised-button color="primary" (click)="saveContact()">SAVE</button>
     <button mat-raised-button (click)="exitContact()">CANCEL</button>
 </ng-template>
 

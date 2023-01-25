@@ -7,6 +7,10 @@ const routes: Routes = [
     {
         path: '',
         component: ContactsTableComponent,
+    },
+    {
+        path: 'contact',
+        component: EditContactComponent
     }
     
 ];

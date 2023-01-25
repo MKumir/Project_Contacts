@@ -1,8 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ContactModel } from '../../models/contact.model';
-import { ContactsService } from 'src/app/services/contacts.service';
+import { ContactsService, GetContactsQuery } from 'src/app/services/contacts.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-contacts-table',
@@ -23,50 +24,56 @@ export class ContactsTableComponent implements OnInit {
     @ViewChild('paginator') paginator: MatPaginator
 
     contacts: ContactModel[] = [];
+    query: GetContactsQuery = {
+        perPage: 1000000
+    }
 
     dataSource: MatTableDataSource<ContactModel>;
-
-    contactData: any
+    
     rotateSpinner: boolean = true
-    editForm: boolean = false
 
+    pageSize: number[] = [20, 10, 5]
    
-
-    constructor(private readonly contactsService: ContactsService) {}
+    constructor(private readonly contactsService: ContactsService, private router: Router) {}
     
 
     ngOnInit() : void {
         this.contactsService
-            .getContacts()
+            .getContacts(this.query)
             .subscribe((data) => {
-                this.dataSource = new MatTableDataSource(data.data);
+                this.contacts = data.data
+                this.dataSource = new MatTableDataSource(this.contacts);
                 this.dataSource.paginator = this.paginator;
                 this.rotateSpinner = false
+                
             });
             
-            
+    }
+
+
+    editContact(c: ContactModel) {
+        this.router.navigateByUrl('contact', {state: {
+            data: c.id,
+        }})
         
     }
 
+    addContact() {
+        this.router.navigateByUrl('contact')
 
-    openEditDialog(c: ContactModel) {
-        this.contactData = c
-        this.editForm = true
     }
 
-    receiveMessage($event: any) {
-        console.log($event.contactsEvent)
-        if ($event.contactsEvent != undefined) {
-            this.dataSource = new MatTableDataSource($event.contactsEvent);
+    removeContact(c: ContactModel) {
+        if(confirm(`Are you sure you want to delete contact ${c.firstName} ${c.lastName}?`)) {
+            this.rotateSpinner = true
+            this.contactsService
+            .deleteContact(c.id)
+            .subscribe(() => {
+                window.location.reload()
+                this.rotateSpinner = false
+            })
         }
-        this.editForm = $event.formEvent
-        
-        
-    }
-
-    openAddDialog() {
-        
-
+       
     }
 
 }
